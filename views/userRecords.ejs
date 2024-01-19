@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Records</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+
+    .container {
+      margin-top: 50px;
+    }
+
+    input[type="text"] {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      transition: border-color 0.3s ease-in-out;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #80bdff;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    .table td,
+    .table th {
+      border-top: none;
+    }
+
+    .btn-delete {
+      transition: background-color 0.3s ease-in-out;
+      background-color: rgb(4, 109, 74);
+    }
+
+    .btn-delete:hover {
+      background-color: #dc3545;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="mb-4">User Records</h1>
+    <table class="table table-bordered table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th>Email</th>
+          <th>Profession</th>
+          <th>Phone</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% data.forEach(record => { %>
+          <tr>
+            <td><input type="text" id="email_<%= record._id %>" class="form-control" value="<%= record.email %>" onblur="editRecord('<%= record._id %>')"></td>
+            <td><input type="text" id="profession_<%= record._id %>" class="form-control" value="<%= record.profession %>" onblur="editRecord('<%= record._id %>')"></td>
+            <td><input type="text" id="phone_<%= record._id %>" class="form-control" value="<%= record.phone %>" onblur="editRecord('<%= record._id %>')"></td>
+            <td><button class="btn btn-delete text-white" onclick="deleteRecord('<%= record._id %>')">Delete</button></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+    <button class="btn btn-primary" onclick="location.href='/';">Back</button>
+  </div>
+  
+
+  <script>
+    const editRecord = async (id) => {
+      const email = document.getElementById(`email_${id}`).value;
+      const profession = document.getElementById(`profession_${id}`).value;
+      const phone = document.getElementById(`phone_${id}`).value;
+
+      try {
+        const response = await axios.put(`/editRecord/${id}`, { email, profession, phone });
+        console.log('Record updated:', response.data);
+        // Optionally update the table or handle the response
+      } catch (error) {
+        console.error('Error updating record:', error);
+      }
+    };
+
+    const deleteRecord = async (id) => {
+      if (confirm('Are you sure you want to delete this record?')) {
+        try {
+          const response = await axios.delete(`/deleteRecord/${id}`);
+          console.log('Record deleted:', response.data);
+          // Optionally update the table or handle the response
+        } catch (error) {
+          console.error('Error deleting record:', error);
+        }
+      }
+    };
+  </script>
+</body>
+</html>
